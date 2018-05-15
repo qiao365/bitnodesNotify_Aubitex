@@ -9,9 +9,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
-app.post('/nodes/notify/btc/eth/others', ControllerNotify.notify);//导入 keystory
+app.post('/aubitex/notify/btc/eth/others', ControllerNotify.notify);//导入 keystory
 
-var port = process.env.PORT || 10010;
+var port = process.env.PORT || 8066;
 app.listen(port);
 console.log(`listen the port: ${port}`);
 module.exports = app;
