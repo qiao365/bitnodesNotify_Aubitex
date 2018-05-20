@@ -164,6 +164,23 @@ model.DomainPaymentAddresses = sequelize.define("payment_addresses", {
     updatedAt: updatedAt
 }); 
 
+model.DomainAccounts = sequelize.define("accounts", {
+    memberId: {
+        type: Sequelize.INTEGER,
+        field: "member_id"
+    },
+    currency:{
+        type: Sequelize.INTEGER,
+        field: "currency"
+    },
+    balance:{
+        type: Sequelize.DECIMAL(32,16),
+        field: "balance"
+    },
+    createdAt: createdAt,
+    updatedAt: updatedAt
+}); 
+
 model.DomainDeposits = sequelize.define("deposits", {
     member_id: {
         type: Sequelize.INTEGER,

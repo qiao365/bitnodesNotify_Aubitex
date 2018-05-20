@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 
-app.post('/aubitex/notify/btc/eth/others', ControllerNotify.notify);//导入 keystory
+app.post('/aubitex/notify/eth', ControllerNotify.notify);//数据监听
 
 var port = process.env.PORT || 8066;
 app.listen(port);

@@ -5,7 +5,7 @@ const DomainPaymentTrasaction = TABLE_DEFINE.DomainPaymentTrasaction;
 const DomainDeposits = TABLE_DEFINE.DomainDeposits;
 const DomainPoolAddresses = TABLE_DEFINE.DomainPoolAddresses;
 const DomainPaymentAddresses = TABLE_DEFINE.DomainPaymentAddresses;
-
+const DomainAccounts = TABLE_DEFINE.DomainAccounts;
 var NotifyModel = module.exports;
 
     // address: ele.address,
@@ -21,49 +21,77 @@ var NotifyModel = module.exports;
     // txDate: new Date(tx.timereceived * 1000)
 
 NotifyModel.notify  = function notify(body){
-    return DomainPoolAddresses.findOne({
-        address:body.address
-    }).then(PA=>{
-        if(PA == null){
-            return Promise.resolve({
-                isSuccess:false,
-                message:"没有此地址"+body.address
-            });
-        }
-        var currency = 2;
-        if(body.bankType == 'BTC'){
-            currency = 2;
-        }else if(body.bankType == 'ETH'){
-            currency = 3;
-        }
-        return DomainPaymentTrasaction.create({//交易插入
-            txid:body.txHash,
-            amount:body.txInput,
-            confirmations:body.blockNumber,
-            address:body.address,
-            // state:
-            // aasm_state:
-            receive_at:txDate,
-            dont_at:new Date(),
-            currency:currency,
-            // type:
-            // txout:
-        }).then(()=>{
-            return DomainPaymentAddresses.findOne({
-                address:body.address
-            }).then(DPA=>{
-                if(DPA == null){
-                    return Promise.resolve({
-                        isSuccess:false,
-                        message:"此地址没有分配用户"+body.address
+    let array = body.data;
+    if(body.password != 'aubitex!@#$'){
+        return Promise.resolve({
+            isSuccess:false,
+            message:'err,pass err'
+        });
+    }
+    let allArray = array.map(item=>{
+        return DomainPoolAddresses.findOne({
+            address:item.address
+        }).then(PA=>{
+            if(PA == null){
+                return Promise.resolve({
+                    isSuccess:false,
+                    message:"没有此地址"+item.address
+                });
+            }
+            let currency = 0;
+            if(item.bankType == 'BTC'){
+                currency = 1;
+            }else if(item.bankType == 'ETH'){
+                currency = 3;
+            }else if(item.bankType == 'CAN'){
+                currency = 4;
+            }
+            return DomainPaymentTrasaction.create({//交易插入
+                txid:item.txHash,
+                amount:item.txInput,
+                confirmations:item.blockNumber,
+                address:item.address,
+                state:'accepted',
+                aasm_state:'accepted',
+                receive_at:txDate,
+                dont_at:new Date(),
+                currency:currency,
+                type:'in'
+                // txout:
+            }).then(()=>{
+                return DomainPaymentAddresses.findOne({
+                    address:item.address
+                }).then(DPA=>{
+                    if(DPA == null){
+                        return Promise.resolve({
+                            isSuccess:false,
+                            message:"此地址没有分配用户"+item.address
+                        });
+                    }
+                    return DomainPaymentAddresses.findOne({
+                        where:{
+                            currency:currency,
+                            address:item.address
+                        }
+                    }).then(paymentAddresses=>{
+                        return DomainAccounts.findOne({
+                            where:{
+                                id:paymentAddresses.accountId,
+                                currency:currency
+                            }
+                        }).then(account=>{
+                            account.balance += item.txHuman;
+                            return account.save();
+                        });
                     });
-                }
-                // DPA.account_id;
-    
+                });
             });
         });
-
-
-
+    });
+    return Promise.all(allArray).then(allback=>{
+        return {
+            isSuccess:true,
+            message:allback.length
+        };
     });
 };
