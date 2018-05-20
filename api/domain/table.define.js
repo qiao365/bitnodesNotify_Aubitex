@@ -148,7 +148,7 @@ model.DomainPaymentTrasaction = sequelize.define("payment_trasactions", {
 }); 
 
 model.DomainPaymentAddresses = sequelize.define("payment_addresses", {
-    account_id: {
+    accountId: {
         type: Sequelize.INTEGER,
         field: "account_id"
     },
