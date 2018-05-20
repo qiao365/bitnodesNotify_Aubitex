@@ -38,7 +38,9 @@ NotifyModel.notify  = function notify(body){
     }
     let allArray = array.map(item=>{
         return DomainPoolAddresses.findOne({
-            address:item.address
+            where:{
+                address:item.address
+            }
         }).then(PA=>{
             if(PA == null){
                 return Promise.resolve({
