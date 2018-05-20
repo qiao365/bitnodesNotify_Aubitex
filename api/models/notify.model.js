@@ -60,28 +60,29 @@ NotifyModel.notify  = function notify(body){
                 // txout:
             }).then(()=>{
                 return DomainPaymentAddresses.findOne({
-                    address:item.address
-                }).then(DPA=>{
-                    if(DPA == null){
+                    where:{
+                        currency:currency,
+                        address:item.address
+                    }
+                }).then(paymentAddresses=>{
+                    if(paymentAddresses == null){
                         return Promise.resolve({
                             isSuccess:false,
                             message:"此地址没有分配用户"+item.address
                         });
                     }
-                    return DomainPaymentAddresses.findOne({
+                    return DomainAccounts.findOne({
                         where:{
-                            currency:currency,
-                            address:item.address
+                            id:paymentAddresses.accountId,
+                            currency:currency
                         }
-                    }).then(paymentAddresses=>{
-                        return DomainAccounts.findOne({
-                            where:{
-                                id:paymentAddresses.accountId,
-                                currency:currency
-                            }
-                        }).then(account=>{
-                            account.balance += item.txHuman;
-                            return account.save();
+                    }).then(account=>{
+                        account.balance += item.txHuman;
+                        return account.save().then(()=>{
+                            return {
+                                isSuccess:true,
+                                message:item.address
+                            };
                         });
                     });
                 });
@@ -91,7 +92,7 @@ NotifyModel.notify  = function notify(body){
     return Promise.all(allArray).then(allback=>{
         return {
             isSuccess:true,
-            message:allback.length
+            message:allback
         };
     });
 };
