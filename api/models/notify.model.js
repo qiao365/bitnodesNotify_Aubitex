@@ -28,6 +28,14 @@ NotifyModel.notify  = function notify(body){
             message:'err,pass err'
         });
     }
+    let currency = 0;
+    if(body.bankType == 'BTC'){
+        currency = 1;
+    }else if(body.bankType == 'ETH'){
+        currency = 3;
+    }else if(body.bankType == 'CAN'){
+        currency = 4;
+    }
     let allArray = array.map(item=>{
         return DomainPoolAddresses.findOne({
             address:item.address
@@ -37,14 +45,6 @@ NotifyModel.notify  = function notify(body){
                     isSuccess:false,
                     message:"没有此地址"+item.address
                 });
-            }
-            let currency = 0;
-            if(item.bankType == 'BTC'){
-                currency = 1;
-            }else if(item.bankType == 'ETH'){
-                currency = 3;
-            }else if(item.bankType == 'CAN'){
-                currency = 4;
             }
             return DomainPaymentTrasaction.create({//交易插入
                 txid:item.txHash,
