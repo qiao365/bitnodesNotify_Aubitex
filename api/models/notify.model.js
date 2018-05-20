@@ -55,7 +55,7 @@ NotifyModel.notify  = function notify(body){
                 address:item.address,
                 state:'accepted',
                 aasm_state:'accepted',
-                receive_at:txDate,
+                receive_at:new Date(),
                 dont_at:new Date(),
                 currency:currency,
                 type:'in'
