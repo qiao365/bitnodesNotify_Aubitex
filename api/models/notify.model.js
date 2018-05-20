@@ -79,7 +79,7 @@ NotifyModel.notify  = function notify(body){
                             currency:currency
                         }
                     }).then(account=>{
-                        account.balance += item.txHuman;
+                        account.balance += item.txHuman*1.0;
                         return account.save().then(()=>{
                             return {
                                 isSuccess:true,
