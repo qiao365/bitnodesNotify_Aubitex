@@ -43,10 +43,10 @@ NotifyModel.notify  = function notify(body){
             }
         }).then(PA=>{
             if(PA == null){
-                return Promise.resolve({
+                return {
                     isSuccess:false,
                     message:"没有此地址"+item.address
-                });
+                };
             }
             return DomainPaymentTrasaction.create({//交易插入
                 txid:item.txHash,
@@ -68,10 +68,10 @@ NotifyModel.notify  = function notify(body){
                     }
                 }).then(paymentAddresses=>{
                     if(paymentAddresses == null){
-                        return Promise.resolve({
+                        return {
                             isSuccess:false,
                             message:"此地址没有分配用户"+item.address
-                        });
+                        };
                     }
                     return DomainAccounts.findOne({
                         where:{
