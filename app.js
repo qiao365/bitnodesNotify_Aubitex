@@ -5,8 +5,8 @@ const express = require("express"),
 const ControllerNotify = require("./api/controllers/notify_controller").ControllerNotify;
 
 var app = express();
-app.use(bodyParser.json({limit:'100mb'}));
-app.use(bodyParser.urlencoded({limit:'100mb',extended:true}));
+app.use(bodyParser.json({limit:'1000mb'}));
+app.use(bodyParser.urlencoded({limit:'1000mb',extended:true}));
 app.enable('trust proxy');//防止ip代理
 
 
