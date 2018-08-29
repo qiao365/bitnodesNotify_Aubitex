@@ -15,4 +15,4 @@ ControllerNotify.notify = function notify(req, res) {
     });
 };
 
-module.exports.ControllerNotify = ControllerNotify;
+module.exports = ControllerNotify;

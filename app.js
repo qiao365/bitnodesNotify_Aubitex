@@ -2,7 +2,7 @@
 
 const express = require("express"),
     bodyParser = require("body-parser");
-const ControllerNotify = require("./api/controllers/notify_controller").ControllerNotify;
+const ControllerNotify = require("./api/controllers/notify_controller");
 
 var app = express();
 app.use(bodyParser.json({limit:'1000mb'}));

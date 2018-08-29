@@ -30,22 +30,24 @@ NotifyModel.notify  = function notify(body){
     }
     let currency = 0;
     if(body.bankType == 'BTC'){
-        currency = 1;
+        currency = 2;
     }else if(body.bankType == 'ETH'){
         currency = 3;
     }else if(body.bankType == 'CAN'){
         currency = 4;
+    }else if(body.bankType == 'USDT'){
+        currency = 1;
     }
     let allArray = array.map(item=>{
         return DomainPoolAddresses.findOne({
             where:{
-                address:item.address
+                address:item.txTo
             }
         }).then(PA=>{
             if(PA == null){
                 return {
                     isSuccess:false,
-                    message:"没有此地址"+item.address
+                    message:"没有此地址"+item.txTo
                 };
             }
             return DomainPaymentTrasaction.create({//交易插入
@@ -55,11 +57,10 @@ NotifyModel.notify  = function notify(body){
                 address:item.address,
                 state:'accepted',
                 aasm_state:'accepted',
-                receive_at:new Date(),
+                receive_at:item.txDate,
                 dont_at:new Date(),
                 currency:currency,
                 type:'in'
-                // txout:
             }).then(()=>{
                 return DomainPaymentAddresses.findOne({
                     where:{
@@ -79,11 +80,10 @@ NotifyModel.notify  = function notify(body){
                             currency:currency
                         }
                     }).then(account=>{
-                        account.balance = account.balance*1.0 + item.txHuman*1.0;
-                        return account.save().then(()=>{
+                        return account.increment({balance:item.txHuman*1.0}).then(()=>{
                             return {
                                 isSuccess:true,
-                                message:item.address
+                                message:item.address+' : '+item.txHuman
                             };
                         });
                     });
