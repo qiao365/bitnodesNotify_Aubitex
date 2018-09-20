@@ -1,14 +1,15 @@
 var Sequelize = require('sequelize');
 var sequelize = new Sequelize('peatio_production', 'root', null, {
-    // host: "localhost",
-    // logging: true,
-    // timezone: "+08:00",  
-    port:3306,
-    // define: {
-    //     freezeTableName: true,
-    //     underscored: true
-    // },
-    dialect: 'mysql'
+    // port:3306,
+    // dialect: 'mysql'
+    host: "localhost",
+    logging: false,
+    define: {
+        freezeTableName: true,
+        underscored: true
+    },
+    dialect: 'postgres',
+    timezone: '+08:00' //东八时区
 });
 const CONFIG = {
     ethereum:{
